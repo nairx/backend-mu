@@ -1,12 +1,12 @@
 import express from "express";
 import { MongoClient, ObjectId } from "mongodb";
-import cors from "cors"
+import cors from "cors";
 const uri = "mongodb://127.0.0.1:27017";
+// const uri = ""
 const client = new MongoClient(uri);
 const db = client.db("ecomm1");
 
 const app = express();
-
 app.use(express.json());
 app.use(cors());
 
@@ -24,19 +24,21 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/", async (req, res) => {
-  const { name, price } = req.body;
+  const { name, price, desc, url } = req.body;
   const data = {
     name: name,
     price: price,
+    desc:desc,
+    url:url
   };
   const newProduct = await db.collection("products").insertOne(data);
   res.status(200).json(newProduct);
 });
 
-
 app.delete("/:id", async (req, res) => {
-    const id = req.params.id;
-    const newProduct = await db.collection("products").deleteOne({_id:new ObjectId(id)});
-    res.status(200).json(newProduct);
-  });
-  
+  const id = req.params.id;
+  const newProduct = await db
+    .collection("products")
+    .deleteOne({ _id: new ObjectId(id) });
+  res.status(200).json(newProduct);
+});
